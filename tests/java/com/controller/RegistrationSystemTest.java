@@ -1,0 +1,82 @@
+package com.controller;
+
+import com.entities.Course;
+import com.entities.Student;
+import com.entities.Teacher;
+import com.exception.ObjectNotFound;
+import com.repository.CourseRepo;
+import com.repository.StudentRepo;
+import com.repository.TeacherRepo;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class RegistrationSystemTest {
+    Student student1 = new Student("Lupsa", "Daria", 1);
+    Student student2 = new Student("Halip", "Petronela", 2);
+    Student student3 = new Student("Morar", "Ana", 3);
+    Student student4 = new Student("Moga", "Florian", 4);
+
+    Teacher teacher1 = new Teacher("Pop", "Dorel",100);
+    Teacher teacher2 = new Teacher("Popa", "Andrei",101);
+
+
+    Course course1 = new Course("Datenbanken", teacher1, 0, 5);
+    Course course2 = new Course("Computernetzwerke", teacher2, 24, 6);
+    Course course3 = new Course("Logische Programmierung", teacher1, 30, 30);
+    Course course4 = new Course("Deutsch", teacher2, 21, 4);
+
+    List<Course> coursesTeacher1 = new ArrayList<>();
+    List<Course> coursesTeacher2 = new ArrayList<>();
+    CourseRepo courseRepo = new CourseRepo();
+    StudentRepo studentRepo = new StudentRepo();
+    TeacherRepo teacherRepo = new TeacherRepo();
+    RegistrationSystem registrationSystem = new RegistrationSystem(teacherRepo, studentRepo, courseRepo);
+
+    @BeforeEach
+    void setUp()
+    {
+
+        coursesTeacher1.add(course1);
+        coursesTeacher1.add(course2);
+        coursesTeacher2.add(course3);
+        coursesTeacher2.add(course4);
+
+
+        courseRepo.create(course1);
+        courseRepo.create(course2);
+        courseRepo.create(course3);
+        courseRepo.create(course4);
+
+
+        studentRepo.create(student1);
+        studentRepo.create(student2);
+        studentRepo.create(student3);
+        studentRepo.create(student4);
+
+
+        teacherRepo.create(teacher1);
+        teacherRepo.create(teacher2);
+
+
+
+    }
+
+
+    @Test
+    void register() throws ObjectNotFound{
+        try {
+            assertFalse(registrationSystem.register(1, "Datenbanken"));
+            registrationSystem.register(2, "Logische Programmierung");
+            assertFalse(registrationSystem.register(2, "Deutsch"));
+            assertTrue(registrationSystem.register(3, "Deutsch"));
+        } catch (ObjectNotFound exc){
+            System.out.println(exc);
+        }
+    }
+}
